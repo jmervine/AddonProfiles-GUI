@@ -35,14 +35,23 @@ Download the latest release for your platform from the releases page.
 
 - Go 1.19 or later
 - Fyne dependencies (see [Fyne documentation](https://developer.fyne.io/started/))
+- **For cross-compilation**: Docker and `fyne-cross` tool
 
 ### Build Commands
 
 ```bash
-# Build for current platform
+# Build for current platform (native build)
 make build
 
-# Build for all platforms
+# Install fyne-cross for cross-compilation
+make install-fyne-cross
+
+# Build for specific platforms (requires Docker)
+make build-windows  # Windows AMD64
+make build-mac      # macOS Intel + ARM64
+make build-linux    # Linux AMD64
+
+# Build for all platforms at once (requires Docker)
 make build-all
 
 # Run tests
@@ -51,6 +60,16 @@ make test
 # Run tests with coverage
 make test-coverage
 ```
+
+### Cross-Compilation Notes
+
+Fyne apps require `fyne-cross` for cross-platform builds because they use CGO:
+
+1. **Install Docker**: Required by fyne-cross for cross-compilation
+2. **Install fyne-cross**: `make install-fyne-cross` or `go install github.com/fyne-io/fyne-cross@latest`
+3. **Build**: `make build-all` will create binaries in `fyne-cross/dist/` directory
+
+**Alternative**: Build natively on each platform using `make build` if you don't have Docker.
 
 ## Development
 

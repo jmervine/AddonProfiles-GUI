@@ -1,24 +1,28 @@
-.PHONY: build build-windows build-mac build-linux build-all test test-coverage test-short clean
+.PHONY: build build-windows build-mac build-linux build-all test test-coverage test-short clean install-fyne-cross
 
-# Build for current platform
+# Build for current platform (native)
 build:
 	go build -o bin/addonprofiles-manager ./cmd/gui
 
-# Build for Windows
+# Install fyne-cross for cross-compilation
+install-fyne-cross:
+	go install github.com/fyne-io/fyne-cross@latest
+
+# Build for Windows (requires fyne-cross and Docker)
 build-windows:
-	GOOS=windows GOARCH=amd64 go build -o bin/addonprofiles-manager.exe ./cmd/gui
+	fyne-cross windows -arch=amd64 -output addonprofiles-manager.exe
 
-# Build for macOS
+# Build for macOS (requires fyne-cross and Docker)
 build-mac:
-	GOOS=darwin GOARCH=amd64 go build -o bin/addonprofiles-manager-amd64 ./cmd/gui
-	GOOS=darwin GOARCH=arm64 go build -o bin/addonprofiles-manager-arm64 ./cmd/gui
+	fyne-cross darwin -arch=amd64,arm64 -output addonprofiles-manager
 
-# Build for Linux
+# Build for Linux (requires fyne-cross and Docker)
 build-linux:
-	GOOS=linux GOARCH=amd64 go build -o bin/addonprofiles-manager ./cmd/gui
+	fyne-cross linux -arch=amd64 -output addonprofiles-manager
 
-# Build for all platforms
-build-all: build-windows build-mac build-linux
+# Build for all platforms (requires fyne-cross and Docker)
+build-all:
+	fyne-cross windows linux darwin -arch=* -output addonprofiles-manager
 
 # Run tests
 test:
