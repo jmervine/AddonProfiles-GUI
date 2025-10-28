@@ -1,0 +1,7 @@
+Ace3: 1
+# AddonProfiles: 0
+Details: 1
+DBM-Core: 1
+# WeakAuras: 0
+BigWigs: 1
+

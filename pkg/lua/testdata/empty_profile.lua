@@ -1,0 +1,9 @@
+AddonProfilesDB = {
+	["global"] = {
+		["profiles"] = {
+		},
+	},
+	["char"] = {
+	},
+}
+
