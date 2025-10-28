@@ -17,7 +17,7 @@ func main() {
 
 	// Create Fyne application
 	myApp := app.NewWithID("com.github.jmervine.addonprofiles")
-	myApp.Settings().SetTheme(&ui.SimpleTheme{})
+	myApp.Settings().SetTheme(ui.NewSimpleTheme())
 
 	// Create main window
 	mainWindow := ui.NewMainWindow(myApp, cfg)
