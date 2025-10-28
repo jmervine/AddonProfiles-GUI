@@ -1,0 +1,63 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0
+
+jobs:
+  build:
+    name: Build Binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Set up Docker for fyne-cross
+        run: docker version
+
+      - name: Install fyne-cross
+        run: go install github.com/fyne-io/fyne-cross@latest
+
+      - name: Build for all platforms
+        run: |
+          fyne-cross windows -arch=amd64 -output addonprofiles-manager.exe
+          fyne-cross darwin -arch=amd64,arm64 -output addonprofiles-manager
+          fyne-cross linux -arch=amd64 -output addonprofiles-manager
+
+      - name: Package binaries
+        run: |
+          mkdir -p release
+          # Windows
+          cd fyne-cross/dist/windows-amd64
+          zip ../../../release/addonprofiles-manager-windows-amd64.zip addonprofiles-manager.exe
+          cd ../../..
+          
+          # macOS Intel
+          cd fyne-cross/dist/darwin-amd64
+          tar czf ../../../release/addonprofiles-manager-macos-amd64.tar.gz addonprofiles-manager.app
+          cd ../../..
+          
+          # macOS ARM (Apple Silicon)
+          cd fyne-cross/dist/darwin-arm64
+          tar czf ../../../release/addonprofiles-manager-macos-arm64.tar.gz addonprofiles-manager.app
+          cd ../../..
+          
+          # Linux
+          cd fyne-cross/dist/linux-amd64
+          tar czf ../../../release/addonprofiles-manager-linux-amd64.tar.gz addonprofiles-manager
+          cd ../../..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

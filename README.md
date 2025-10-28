@@ -11,15 +11,39 @@ A cross-platform GUI application for managing World of Warcraft addon profiles o
 
 ## Installation
 
+### Pre-built Binaries (Recommended)
+
+Download the latest release for your platform:
+
+👉 **[Download from Releases](https://github.com/jmervine/AddonProfiles-GUI/releases/latest)**
+
+#### Windows
+1. Download `addonprofiles-manager-windows-amd64.zip`
+2. Extract the ZIP file
+3. Run `addonprofiles-manager.exe`
+
+#### macOS
+1. Download:
+   - **Apple Silicon (M1/M2/M3)**: `addonprofiles-manager-macos-arm64.tar.gz`
+   - **Intel**: `addonprofiles-manager-macos-amd64.tar.gz`
+2. Extract the archive: `tar xzf addonprofiles-manager-macos-*.tar.gz`
+3. Move `addonprofiles-manager.app` to your Applications folder
+4. On first launch, you may need to right-click → Open to bypass Gatekeeper
+
+#### Linux
+1. Download `addonprofiles-manager-linux-amd64.tar.gz`
+2. Extract: `tar xzf addonprofiles-manager-linux-amd64.tar.gz`
+3. Make executable: `chmod +x addonprofiles-manager`
+4. Run: `./addonprofiles-manager`
+
 ### From Source
 
 ```bash
-go build -o bin/addonprofiles-manager ./cmd/gui
+git clone https://github.com/jmervine/AddonProfiles-GUI.git
+cd AddonProfiles-GUI
+make build
+./bin/addonprofiles-manager
 ```
-
-### Pre-built Binaries
-
-Download the latest release for your platform from the releases page.
 
 ## Usage
 
