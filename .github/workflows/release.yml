@@ -31,17 +31,26 @@ jobs:
           fyne-cross windows -arch=amd64 -app-id com.github.jmervine.addonprofiles ./cmd/gui
           fyne-cross linux -arch=amd64 -app-id com.github.jmervine.addonprofiles ./cmd/gui
 
+      - name: List build outputs
+        run: |
+          echo "Windows build output:"
+          ls -lah fyne-cross/dist/windows-amd64/ || true
+          echo "Linux build output:"
+          ls -lah fyne-cross/dist/linux-amd64/ || true
+
       - name: Package binaries
         run: |
           mkdir -p release
-          # Windows
+          # Windows - find the .exe file
           cd fyne-cross/dist/windows-amd64
-          zip ../../../release/addonprofiles-manager-windows-amd64.zip gui.exe
+          EXE_FILE=$(ls *.exe | head -1)
+          zip ../../../release/addonprofiles-manager-windows-amd64.zip "$EXE_FILE"
           cd ../../..
           
-          # Linux
+          # Linux - find the binary
           cd fyne-cross/dist/linux-amd64
-          tar czf ../../../release/addonprofiles-manager-linux-amd64.tar.gz gui
+          BIN_FILE=$(ls | grep -v "\.tar\|\.gz" | head -1)
+          tar czf ../../../release/addonprofiles-manager-linux-amd64.tar.gz "$BIN_FILE"
           cd ../../..
 
       - name: Upload artifacts
