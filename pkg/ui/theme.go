@@ -29,7 +29,9 @@ func (st *SimpleTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant
 	case theme.ColorNamePlaceHolder:
 		return color.RGBA{R: 120, G: 120, B: 120, A: 255} // Dim text for placeholders
 	case theme.ColorNamePrimary:
-		return color.RGBA{R: 0, G: 122, B: 255, A: 255} // Blue for hyperlinks
+		return color.RGBA{R: 240, G: 240, B: 240, A: 255} // White for hyperlinks (better contrast)
+	case theme.ColorNameHyperlink:
+		return color.RGBA{R: 240, G: 240, B: 240, A: 255} // White for links
 	case theme.ColorNameSelection:
 		return color.RGBA{R: 255, G: 209, B: 0, A: 100} // Gold selection (like WoW)
 	case theme.ColorNameSuccess:

@@ -33,14 +33,29 @@ func NewActionPanel(mw *MainWindow) *ActionPanel {
 	})
 	ap.applyBtn.Disable()
 
+	// Info text explaining workflow
+	infoLabel := widget.NewLabel("Create and manage profiles\nin-game using the addon.\n\nThis tool lets you apply\nprofiles outside of WoW.")
+	infoLabel.Wrapping = fyne.TextWrapWord
+	
+	profileNameLabel := widget.NewLabel("Profile Name:")
+	profileNameLabel.TextStyle = fyne.TextStyle{Bold: true}
+	
+	scopeNameLabel := widget.NewLabel("Scope:")
+	scopeNameLabel.TextStyle = fyne.TextStyle{Bold: true}
+	
+	countNameLabel := widget.NewLabel("AddOn Count:")
+	countNameLabel.TextStyle = fyne.TextStyle{Bold: true}
+
 	ap.container = container.NewVBox(
-		widget.NewLabel("Settings"),
+		widget.NewLabel("Profile Actions"),
 		widget.NewSeparator(),
-		widget.NewLabel("Profile Name:"),
+		infoLabel,
+		widget.NewSeparator(),
+		profileNameLabel,
 		ap.profileLabel,
-		widget.NewLabel("Scope:"),
+		scopeNameLabel,
 		ap.scopeLabel,
-		widget.NewLabel("AddOn Count:"),
+		countNameLabel,
 		ap.countLabel,
 		widget.NewSeparator(),
 		ap.applyBtn,

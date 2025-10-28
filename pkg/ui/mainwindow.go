@@ -2,12 +2,12 @@ package ui
 
 import (
 	"net/url"
-	
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	
+
 	"github.com/jmervine/AddonProfiles-GUI/pkg/config"
 	"github.com/jmervine/AddonProfiles-GUI/pkg/wow"
 )
@@ -56,16 +56,18 @@ func NewMainWindow(app fyne.App, cfg *config.Config) *MainWindow {
 
 // showWowPathDialog shows the WoW installation path selection dialog
 func (mw *MainWindow) showWowPathDialog() {
-	dialog.ShowInformation("Welcome",
-		"Please select your World of Warcraft installation directory.",
+	dialog.ShowConfirm("Welcome to Addon Profile Manager",
+		"Please select your World of Warcraft installation directory.\n\n"+
+			"This tool reads profiles from the addon's SavedVariables\n"+
+			"and applies them by updating WoW's AddOns.txt file.",
+		func(confirmed bool) {
+			if confirmed {
+				mw.selectWowPath()
+			} else {
+				mw.app.Quit()
+			}
+		},
 		mw.window)
-
-	// Show directory picker on next event loop
-	mw.window.Canvas().SetOnTypedKey(func(e *fyne.KeyEvent) {
-		if e.Name == fyne.KeyEscape {
-			mw.selectWowPath()
-		}
-	})
 }
 
 // selectWowPath shows a directory picker for WoW installation
@@ -155,9 +157,25 @@ func (mw *MainWindow) setupUI() {
 	mw.addonPanel = NewAddonPanel(mw)
 	mw.actionPanel = NewActionPanel(mw)
 
+	// Create header with WoW path info
+	wowPathLabel := widget.NewLabel("WoW Installation: " + mw.config.WowInstallPath)
+	wowPathLabel.TextStyle = fyne.TextStyle{Bold: true}
+	changePathBtn := widget.NewButton("Change WoW Path", func() {
+		mw.selectWowPath()
+	})
+	
+	header := container.NewBorder(
+		nil,
+		nil,
+		wowPathLabel,
+		changePathBtn,
+		nil,
+	)
+
 	// Create footer with status and CurseForge link
 	curseforgeURL, _ := url.Parse("https://www.curseforge.com/wow/addons/addon-profiles")
-	curseforgeLink := widget.NewHyperlink("Get the in-game addon on CurseForge", curseforgeURL)
+	curseforgeLink := widget.NewHyperlink("▶ Get the in-game addon on CurseForge", curseforgeURL)
+	curseforgeLink.TextStyle = fyne.TextStyle{Bold: true}
 	
 	footer := container.NewBorder(
 		nil,
@@ -169,7 +187,7 @@ func (mw *MainWindow) setupUI() {
 	
 	// Create main layout
 	content := container.NewBorder(
-		nil,     // top
+		header,  // top
 		footer,  // bottom
 		nil,     // left
 		nil,     // right
