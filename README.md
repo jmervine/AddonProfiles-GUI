@@ -18,13 +18,25 @@ Download the latest release for your platform:
 👉 **[Download from Releases](https://github.com/jmervine/AddonProfiles-GUI/releases/latest)**
 
 #### Windows
+
+⚠️ **IMPORTANT: Windows Defender may automatically delete the file (false positive).** 
+
+**Before downloading, add an exclusion:**
+1. Open Windows Security (search for it in Start menu)
+2. Go to: Virus & threat protection → Manage settings
+3. Scroll down to "Exclusions" → Add or remove exclusions
+4. Click "Add an exclusion" → Choose "Folder"
+5. Select your Downloads folder (or wherever you'll save the file)
+
+**Then download and run:**
 1. Download `addonprofiles-manager-windows-amd64.zip`
 2. Extract the ZIP file
 3. Run `addonprofiles-manager.exe`
+4. If Windows SmartScreen appears, click "More info" → "Run anyway"
 
-**Note for Windows users:** Windows Defender may flag the executable as a potential threat (false positive). This is common with unsigned Go applications. To run the application:
-- Click "More info" → "Run anyway" when Windows SmartScreen appears
-- Or add an exception in Windows Defender: Settings → Virus & threat protection → Manage settings → Add or remove exclusions
+**Why this happens:** This is a common issue with unsigned Go applications. The app is safe and open-source. Code signing certificates cost ~$300/year which isn't feasible for a free tool.
+
+**Alternative:** If you're uncomfortable with the exclusion, you can build from source (see below).
 
 #### macOS
 1. Download: `addonprofiles-manager-macos-universal.tar.gz` (works on both Intel and Apple Silicon)
