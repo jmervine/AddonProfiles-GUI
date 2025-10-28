@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"net/url"
 
 	"fyne.io/fyne/v2"
@@ -9,6 +10,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 
 	"github.com/jmervine/AddonProfiles-GUI/pkg/config"
+	"github.com/jmervine/AddonProfiles-GUI/pkg/version"
 	"github.com/jmervine/AddonProfiles-GUI/pkg/wow"
 )
 
@@ -38,7 +40,7 @@ func NewMainWindow(app fyne.App, cfg *config.Config) *MainWindow {
 		statusLabel: widget.NewLabel("Ready"),
 	}
 
-	mw.window = app.NewWindow("Addon Profile Manager")
+	mw.window = app.NewWindow(fmt.Sprintf("Addon Profile Manager v%s", version.GetVersion()))
 	mw.window.Resize(fyne.NewSize(1000, 600))
 	mw.window.CenterOnScreen()
 
@@ -232,7 +234,7 @@ func (mw *MainWindow) setStatus(text string) {
 // showAbout shows the about dialog
 func (mw *MainWindow) showAbout() {
 	dialog.ShowInformation("About",
-		"Addon Profile Manager v1.0\n\n"+
+		fmt.Sprintf("Addon Profile Manager v%s\n\n", version.GetVersion())+
 			"Manage World of Warcraft addon profiles\n"+
 			"outside of the game.\n\n"+
 			"github.com/jmervine/AddonProfiles-GUI",
