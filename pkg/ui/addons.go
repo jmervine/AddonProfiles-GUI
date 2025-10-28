@@ -32,13 +32,13 @@ func NewAddonPanel(mw *MainWindow) *AddonPanel {
 		addons:     []AddonItem{},
 		filtered:   []AddonItem{},
 	}
-	
+
 	ap.searchEntry = widget.NewEntry()
 	ap.searchEntry.SetPlaceHolder("Search addons...")
 	ap.searchEntry.OnChanged = func(text string) {
 		ap.filterAddons(text)
 	}
-	
+
 	ap.addonList = widget.NewList(
 		func() int {
 			return len(ap.filtered)
@@ -56,7 +56,7 @@ func NewAddonPanel(mw *MainWindow) *AddonPanel {
 			}
 		},
 	)
-	
+
 	ap.container = container.NewBorder(
 		container.NewVBox(
 			widget.NewLabel("AddOns"),
@@ -67,7 +67,7 @@ func NewAddonPanel(mw *MainWindow) *AddonPanel {
 		nil,
 		ap.addonList,
 	)
-	
+
 	return ap
 }
 
@@ -85,7 +85,7 @@ func (ap *AddonPanel) Refresh() {
 		ap.addonList.Refresh()
 		return
 	}
-	
+
 	// Convert map to sorted slice
 	ap.addons = []AddonItem{}
 	for name, enabled := range profile.Addons {
@@ -94,11 +94,11 @@ func (ap *AddonPanel) Refresh() {
 			Enabled: enabled,
 		})
 	}
-	
+
 	sort.Slice(ap.addons, func(i, j int) bool {
 		return ap.addons[i].Name < ap.addons[j].Name
 	})
-	
+
 	ap.filterAddons(ap.searchEntry.Text)
 }
 
@@ -115,7 +115,6 @@ func (ap *AddonPanel) filterAddons(search string) {
 			}
 		}
 	}
-	
+
 	ap.addonList.Refresh()
 }
-

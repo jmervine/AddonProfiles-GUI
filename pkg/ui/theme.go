@@ -46,4 +46,3 @@ func (st *SimpleTheme) Icon(name fyne.ThemeIconName) fyne.Resource {
 func (st *SimpleTheme) Size(name fyne.ThemeSizeName) float32 {
 	return theme.DefaultTheme().Size(name)
 }
-

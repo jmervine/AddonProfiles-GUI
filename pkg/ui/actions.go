@@ -11,12 +11,12 @@ import (
 
 // ActionPanel displays profile actions and info
 type ActionPanel struct {
-	mainWindow    *MainWindow
-	container     *fyne.Container
-	profileLabel  *widget.Label
-	scopeLabel    *widget.Label
-	countLabel    *widget.Label
-	applyBtn      *widget.Button
+	mainWindow   *MainWindow
+	container    *fyne.Container
+	profileLabel *widget.Label
+	scopeLabel   *widget.Label
+	countLabel   *widget.Label
+	applyBtn     *widget.Button
 }
 
 // NewActionPanel creates a new action panel
@@ -27,12 +27,12 @@ func NewActionPanel(mw *MainWindow) *ActionPanel {
 		scopeLabel:   widget.NewLabel(""),
 		countLabel:   widget.NewLabel(""),
 	}
-	
+
 	ap.applyBtn = widget.NewButton("Apply Profile", func() {
 		ap.applyProfile()
 	})
 	ap.applyBtn.Disable()
-	
+
 	ap.container = container.NewVBox(
 		widget.NewLabel("Settings"),
 		widget.NewSeparator(),
@@ -45,7 +45,7 @@ func NewActionPanel(mw *MainWindow) *ActionPanel {
 		widget.NewSeparator(),
 		ap.applyBtn,
 	)
-	
+
 	return ap
 }
 
@@ -57,7 +57,7 @@ func (ap *ActionPanel) Container() *fyne.Container {
 // Refresh updates the action panel
 func (ap *ActionPanel) Refresh() {
 	profile, scope := ap.mainWindow.profilePanel.GetSelectedProfile()
-	
+
 	if profile == nil {
 		ap.profileLabel.SetText("No profile selected")
 		ap.scopeLabel.SetText("")
@@ -65,7 +65,7 @@ func (ap *ActionPanel) Refresh() {
 		ap.applyBtn.Disable()
 		return
 	}
-	
+
 	ap.profileLabel.SetText(profile.Name)
 	ap.scopeLabel.SetText(scope)
 	ap.countLabel.SetText(fmt.Sprintf("%d addons", len(profile.Addons)))
@@ -78,34 +78,33 @@ func (ap *ActionPanel) applyProfile() {
 	if profile == nil {
 		return
 	}
-	
+
 	// Confirmation dialog
 	dialog.ShowConfirm(
 		"Apply Profile",
-		fmt.Sprintf("Apply profile '%s' (%s)?\n\nThis will update your AddOns.txt file.\nA backup will be created automatically.", 
+		fmt.Sprintf("Apply profile '%s' (%s)?\n\nThis will update your AddOns.txt file.\nA backup will be created automatically.",
 			profile.Name, scope),
 		func(confirmed bool) {
 			if !confirmed {
 				return
 			}
-			
+
 			mgr := ap.mainWindow.GetManager()
 			if mgr == nil {
 				dialog.ShowError(fmt.Errorf("WoW manager not initialized"), ap.mainWindow.GetWindow())
 				return
 			}
-			
+
 			if err := mgr.ApplyProfile(profile); err != nil {
 				dialog.ShowError(err, ap.mainWindow.GetWindow())
 				return
 			}
-			
+
 			ap.mainWindow.setStatus(fmt.Sprintf("Profile '%s' applied successfully", profile.Name))
-			dialog.ShowInformation("Success", 
+			dialog.ShowInformation("Success",
 				fmt.Sprintf("Profile '%s' has been applied.\n\nYour addons will be updated when you start WoW.", profile.Name),
 				ap.mainWindow.GetWindow())
 		},
 		ap.mainWindow.GetWindow(),
 	)
 }
-

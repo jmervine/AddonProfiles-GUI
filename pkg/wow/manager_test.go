@@ -37,12 +37,12 @@ func TestParseAddOnsFile(t *testing.T) {
 	}
 
 	expected := map[string]bool{
-		"Ace3":           true,
-		"AddonProfiles":  false,
-		"Details":        true,
-		"DBM-Core":       true,
-		"WeakAuras":      false,
-		"BigWigs":        true,
+		"Ace3":          true,
+		"AddonProfiles": false,
+		"Details":       true,
+		"DBM-Core":      true,
+		"WeakAuras":     false,
+		"BigWigs":       true,
 	}
 
 	if len(addons) != len(expected) {
@@ -417,4 +417,3 @@ func TestGetActiveAddons(t *testing.T) {
 		t.Error("Expected AddonProfiles to be disabled")
 	}
 }
-

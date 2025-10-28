@@ -32,12 +32,12 @@ func TestParseFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			path := filepath.Join("testdata", tt.file)
 			db, err := ParseFile(path)
-			
+
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ParseFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			
+
 			if !tt.wantErr && db == nil {
 				t.Error("ParseFile() returned nil database without error")
 			}
@@ -164,12 +164,12 @@ func TestParseEmptyProfile(t *testing.T) {
 func TestParseMalformed(t *testing.T) {
 	path := filepath.Join("testdata", "malformed.lua")
 	db, err := ParseFile(path)
-	
+
 	// Should not error, but might return incomplete data
 	if err != nil {
 		t.Logf("ParseFile() returned error (expected for malformed): %v", err)
 	}
-	
+
 	if db != nil {
 		// If it parsed something, profiles should be incomplete
 		t.Logf("Parsed malformed file, got %d global profiles", len(db.Global.Profiles))
@@ -351,4 +351,3 @@ func TestParseTableContent(t *testing.T) {
 		t.Errorf("key2 = %v, want true", result["key2"])
 	}
 }
-

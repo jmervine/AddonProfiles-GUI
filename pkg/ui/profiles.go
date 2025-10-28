@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	
+
 	"github.com/jmervine/AddonProfiles-GUI/pkg/lua"
 )
 
@@ -34,7 +34,7 @@ func NewProfilePanel(mw *MainWindow) *ProfilePanel {
 		mainWindow: mw,
 		profiles:   []*ProfileItem{},
 	}
-	
+
 	pp.profileList = widget.NewList(
 		func() int {
 			return len(pp.profiles)
@@ -54,7 +54,7 @@ func NewProfilePanel(mw *MainWindow) *ProfilePanel {
 			}
 		},
 	)
-	
+
 	pp.profileList.OnSelected = func(id widget.ListItemID) {
 		if id < len(pp.profiles) {
 			pp.selectedProfile = pp.profiles[id].Profile
@@ -63,11 +63,11 @@ func NewProfilePanel(mw *MainWindow) *ProfilePanel {
 			mw.actionPanel.Refresh()
 		}
 	}
-	
+
 	refreshBtn := widget.NewButton("Refresh Profiles", func() {
 		pp.Refresh()
 	})
-	
+
 	pp.container = container.NewBorder(
 		widget.NewLabel("Profiles"),
 		refreshBtn,
@@ -75,7 +75,7 @@ func NewProfilePanel(mw *MainWindow) *ProfilePanel {
 		nil,
 		pp.profileList,
 	)
-	
+
 	return pp
 }
 
@@ -90,15 +90,15 @@ func (pp *ProfilePanel) Refresh() {
 	if mgr == nil {
 		return
 	}
-	
+
 	db, err := mgr.LoadProfiles()
 	if err != nil {
 		pp.mainWindow.setStatus(fmt.Sprintf("Error loading profiles: %v", err))
 		return
 	}
-	
+
 	pp.profiles = []*ProfileItem{}
-	
+
 	// Add global profiles
 	for name, profile := range db.Global.Profiles {
 		pp.profiles = append(pp.profiles, &ProfileItem{
@@ -108,10 +108,10 @@ func (pp *ProfilePanel) Refresh() {
 			Profile:  profile,
 		})
 	}
-	
+
 	// Add character profiles (current character only for simplicity)
 	// You could expand this to show all characters
-	
+
 	pp.profileList.Refresh()
 	pp.mainWindow.setStatus(fmt.Sprintf("Loaded %d profiles", len(pp.profiles)))
 }
@@ -120,4 +120,3 @@ func (pp *ProfilePanel) Refresh() {
 func (pp *ProfilePanel) GetSelectedProfile() (*lua.Profile, string) {
 	return pp.selectedProfile, pp.selectedScope
 }
-

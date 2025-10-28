@@ -21,8 +21,7 @@ func main() {
 
 	// Create main window
 	mainWindow := ui.NewMainWindow(myApp, cfg)
-	
+
 	// Show and run
 	mainWindow.ShowAndRun()
 }
-

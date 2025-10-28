@@ -62,7 +62,7 @@ func Parse(content string) (*Database, error) {
 	if err == nil {
 		return db, nil
 	}
-	
+
 	// Fallback to regex-based parser (kept for compatibility)
 	return parseRegex(content)
 }
@@ -163,7 +163,7 @@ func extractTable(content string, keys ...string) (map[string]string, error) {
 	pattern := buildTablePattern(keys...)
 	re := regexp.MustCompile(pattern)
 	matches := re.FindStringSubmatch(content)
-	
+
 	if len(matches) < 2 {
 		return nil, fmt.Errorf("table not found: %v", keys)
 	}
@@ -177,7 +177,7 @@ func extractTableFromContent(content, key string) (map[string]string, error) {
 	pattern := fmt.Sprintf(`\["%s"\]\s*=\s*\{([^}]*(?:\{[^}]*\}[^}]*)*)\}`, regexp.QuoteMeta(key))
 	re := regexp.MustCompile(pattern)
 	matches := re.FindStringSubmatch(content)
-	
+
 	if len(matches) < 2 {
 		return nil, fmt.Errorf("table not found: %s", key)
 	}
@@ -188,11 +188,11 @@ func extractTableFromContent(content, key string) (map[string]string, error) {
 // parseTableContent parses the content of a Lua table
 func parseTableContent(content string) map[string]string {
 	result := make(map[string]string)
-	
+
 	// Match table entries: ["key"] = value or ["key"] = { ... }
 	entryPattern := regexp.MustCompile(`\["([^"]+)"\]\s*=\s*(\{[^}]*(?:\{[^}]*\}[^}]*)*\}|[^,\n]+)`)
 	matches := entryPattern.FindAllStringSubmatch(content, -1)
-	
+
 	for _, match := range matches {
 		if len(match) >= 3 {
 			key := match[1]
@@ -201,7 +201,7 @@ func parseTableContent(content string) map[string]string {
 			result[key] = value
 		}
 	}
-	
+
 	return result
 }
 
@@ -210,11 +210,11 @@ func extractString(content string, keys ...string) string {
 	pattern := buildStringPattern(keys...)
 	re := regexp.MustCompile(pattern)
 	matches := re.FindStringSubmatch(content)
-	
+
 	if len(matches) >= 2 {
 		return matches[1]
 	}
-	
+
 	return ""
 }
 
@@ -223,46 +223,46 @@ func extractStringFromContent(content, key string) string {
 	pattern := fmt.Sprintf(`\["%s"\]\s*=\s*"([^"]*)"`, regexp.QuoteMeta(key))
 	re := regexp.MustCompile(pattern)
 	matches := re.FindStringSubmatch(content)
-	
+
 	if len(matches) >= 2 {
 		return matches[1]
 	}
-	
+
 	// Try without quotes (for booleans/numbers)
 	pattern = fmt.Sprintf(`\["%s"\]\s*=\s*([^,\n]+)`, regexp.QuoteMeta(key))
 	re = regexp.MustCompile(pattern)
 	matches = re.FindStringSubmatch(content)
-	
+
 	if len(matches) >= 2 {
 		return strings.TrimSpace(strings.Trim(matches[1], ","))
 	}
-	
+
 	return ""
 }
 
 // extractCharSection extracts all character sections
 func extractCharSection(content string) map[string]string {
 	result := make(map[string]string)
-	
+
 	// Find the char section
 	charPattern := regexp.MustCompile(`\["char"\]\s*=\s*\{(.*)\}[\s\n]*\}[\s\n]*$`)
 	charMatches := charPattern.FindStringSubmatch(content)
-	
+
 	if len(charMatches) < 2 {
 		return result
 	}
-	
+
 	charContent := charMatches[1]
-	
+
 	// Extract each character entry
 	scanner := bufio.NewScanner(strings.NewReader(charContent))
 	var currentChar string
 	var currentContent strings.Builder
 	bracketDepth := 0
-	
+
 	for scanner.Scan() {
 		line := scanner.Text()
-		
+
 		// Check for character key
 		charKeyPattern := regexp.MustCompile(`\["([^"]+\s+-\s+[^"]+)"\]\s*=\s*\{`)
 		if matches := charKeyPattern.FindStringSubmatch(line); len(matches) >= 2 {
@@ -274,14 +274,14 @@ func extractCharSection(content string) map[string]string {
 			bracketDepth = 1
 			continue
 		}
-		
+
 		if currentChar != "" {
 			currentContent.WriteString(line)
 			currentContent.WriteString("\n")
-			
+
 			// Track bracket depth
 			bracketDepth += strings.Count(line, "{") - strings.Count(line, "}")
-			
+
 			if bracketDepth == 0 {
 				result[currentChar] = currentContent.String()
 				currentChar = ""
@@ -289,11 +289,11 @@ func extractCharSection(content string) map[string]string {
 			}
 		}
 	}
-	
+
 	if currentChar != "" && currentContent.Len() > 0 {
 		result[currentChar] = currentContent.String()
 	}
-	
+
 	return result
 }
 
@@ -317,4 +317,3 @@ func buildStringPattern(keys ...string) string {
 	pattern += fmt.Sprintf(`\s*=\s*\{[^}]*\["%s"\]\s*=\s*"([^"]*)"`, regexp.QuoteMeta(lastKey))
 	return pattern
 }
-

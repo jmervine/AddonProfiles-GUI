@@ -31,7 +31,7 @@ func NewManager(wowPath, account string, backupCount int) *Manager {
 // GetAccounts returns a list of account names found in the WTF directory
 func (m *Manager) GetAccounts() ([]string, error) {
 	accountsPath := filepath.Join(m.wowPath, "WTF", "Account")
-	
+
 	entries, err := os.ReadDir(accountsPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read accounts directory: %w", err)
@@ -53,7 +53,7 @@ func (m *Manager) LoadProfiles() (*lua.Database, error) {
 		return nil, fmt.Errorf("no account selected")
 	}
 
-	savedVarsPath := filepath.Join(m.wowPath, "WTF", "Account", m.selectedAccount, 
+	savedVarsPath := filepath.Join(m.wowPath, "WTF", "Account", m.selectedAccount,
 		"SavedVariables", "AddonProfilesDB.lua")
 
 	if _, err := os.Stat(savedVarsPath); os.IsNotExist(err) {
@@ -145,7 +145,7 @@ func (m *Manager) createBackup(addonsPath string) error {
 func (m *Manager) cleanupBackups(addonsPath string) error {
 	dir := filepath.Dir(addonsPath)
 	base := filepath.Base(addonsPath)
-	
+
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return err
@@ -281,4 +281,3 @@ func ValidateWowDirectory(path string) error {
 
 	return nil
 }
-

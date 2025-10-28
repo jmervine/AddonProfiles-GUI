@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"net/url"
+	
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
@@ -15,15 +17,15 @@ type MainWindow struct {
 	app    fyne.App
 	window fyne.Window
 	config *config.Config
-	
+
 	// WoW manager
 	manager *wow.Manager
-	
+
 	// UI components
 	profilePanel *ProfilePanel
 	addonPanel   *AddonPanel
 	actionPanel  *ActionPanel
-	
+
 	statusLabel *widget.Label
 }
 
@@ -34,11 +36,11 @@ func NewMainWindow(app fyne.App, cfg *config.Config) *MainWindow {
 		config:      cfg,
 		statusLabel: widget.NewLabel("Ready"),
 	}
-	
+
 	mw.window = app.NewWindow("Addon Profile Manager")
 	mw.window.Resize(fyne.NewSize(1000, 600))
 	mw.window.CenterOnScreen()
-	
+
 	// Check if WoW path is configured
 	if cfg.WowInstallPath == "" {
 		mw.showWowPathDialog()
@@ -47,17 +49,17 @@ func NewMainWindow(app fyne.App, cfg *config.Config) *MainWindow {
 	} else {
 		mw.initializeManager()
 	}
-	
+
 	mw.setupUI()
 	return mw
 }
 
 // showWowPathDialog shows the WoW installation path selection dialog
 func (mw *MainWindow) showWowPathDialog() {
-	dialog.ShowInformation("Welcome", 
-		"Please select your World of Warcraft installation directory.", 
+	dialog.ShowInformation("Welcome",
+		"Please select your World of Warcraft installation directory.",
 		mw.window)
-	
+
 	// Show directory picker on next event loop
 	mw.window.Canvas().SetOnTypedKey(func(e *fyne.KeyEvent) {
 		if e.Name == fyne.KeyEscape {
@@ -73,27 +75,27 @@ func (mw *MainWindow) selectWowPath() {
 			dialog.ShowError(err, mw.window)
 			return
 		}
-		
+
 		if uri == nil {
 			return // User cancelled
 		}
-		
+
 		path := uri.Path()
-		
+
 		// Validate WoW directory
 		if err := wow.ValidateWowDirectory(path); err != nil {
 			dialog.ShowError(err, mw.window)
 			mw.selectWowPath() // Try again
 			return
 		}
-		
+
 		// Save path
 		mw.config.WowInstallPath = path
 		if err := mw.config.Save(); err != nil {
 			dialog.ShowError(err, mw.window)
 			return
 		}
-		
+
 		mw.initializeManager()
 		mw.refresh()
 		mw.setStatus("WoW directory configured")
@@ -105,7 +107,7 @@ func (mw *MainWindow) initializeManager() {
 	if mw.config.WowInstallPath == "" {
 		return
 	}
-	
+
 	// Auto-select first account if none selected
 	if mw.config.SelectedAccount == "" {
 		mgr := wow.NewManager(mw.config.WowInstallPath, "", 5)
@@ -115,7 +117,7 @@ func (mw *MainWindow) initializeManager() {
 			mw.config.Save()
 		}
 	}
-	
+
 	mw.manager = wow.NewManager(
 		mw.config.WowInstallPath,
 		mw.config.SelectedAccount,
@@ -138,27 +140,39 @@ func (mw *MainWindow) setupUI() {
 			mw.app.Quit()
 		}),
 	)
-	
+
 	helpMenu := fyne.NewMenu("Help",
 		fyne.NewMenuItem("About", func() {
 			mw.showAbout()
 		}),
 	)
-	
+
 	mainMenu := fyne.NewMainMenu(fileMenu, helpMenu)
 	mw.window.SetMainMenu(mainMenu)
-	
+
 	// Create panels
 	mw.profilePanel = NewProfilePanel(mw)
 	mw.addonPanel = NewAddonPanel(mw)
 	mw.actionPanel = NewActionPanel(mw)
+
+	// Create footer with status and CurseForge link
+	curseforgeURL, _ := url.Parse("https://www.curseforge.com/wow/addons/addon-profiles")
+	curseforgeLink := widget.NewHyperlink("Get the in-game addon on CurseForge", curseforgeURL)
+	
+	footer := container.NewBorder(
+		nil,
+		nil,
+		mw.statusLabel,
+		curseforgeLink,
+		nil,
+	)
 	
 	// Create main layout
 	content := container.NewBorder(
-		nil, // top
-		mw.statusLabel, // bottom
-		nil, // left
-		nil, // right
+		nil,     // top
+		footer,  // bottom
+		nil,     // left
+		nil,     // right
 		container.NewHSplit(
 			container.NewHSplit(
 				mw.profilePanel.Container(),
@@ -167,9 +181,9 @@ func (mw *MainWindow) setupUI() {
 			mw.actionPanel.Container(),
 		),
 	)
-	
+
 	mw.window.SetContent(content)
-	
+
 	// Initial refresh
 	mw.refresh()
 }
@@ -179,7 +193,7 @@ func (mw *MainWindow) refresh() {
 	if mw.manager == nil {
 		return
 	}
-	
+
 	mw.profilePanel.Refresh()
 	mw.addonPanel.Refresh()
 	mw.actionPanel.Refresh()
@@ -219,4 +233,3 @@ func (mw *MainWindow) GetConfig() *config.Config {
 func (mw *MainWindow) GetWindow() fyne.Window {
 	return mw.window
 }
-

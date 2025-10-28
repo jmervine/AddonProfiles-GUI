@@ -246,11 +246,11 @@ func TestLoadWithMissingBackupCount(t *testing.T) {
 
 // Helper function
 func containsPath(path, substr string) bool {
-	return filepath.ToSlash(path) != "" && 
-		(filepath.ToSlash(path) == substr || 
-		 len(filepath.ToSlash(path)) > len(substr) && 
-		 (filepath.ToSlash(path)[len(filepath.ToSlash(path))-len(substr):] == substr ||
-		  containsSubstring(filepath.ToSlash(path), substr)))
+	return filepath.ToSlash(path) != "" &&
+		(filepath.ToSlash(path) == substr ||
+			len(filepath.ToSlash(path)) > len(substr) &&
+				(filepath.ToSlash(path)[len(filepath.ToSlash(path))-len(substr):] == substr ||
+					containsSubstring(filepath.ToSlash(path), substr)))
 }
 
 func containsSubstring(s, substr string) bool {
@@ -261,4 +261,3 @@ func containsSubstring(s, substr string) bool {
 	}
 	return false
 }
-
