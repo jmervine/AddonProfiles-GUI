@@ -26,8 +26,8 @@ type MainWindow struct {
 	addonPanel   *AddonPanel
 	actionPanel  *ActionPanel
 
-	statusLabel   *widget.Label
-	wowPathLabel  *widget.Label
+	statusLabel  *widget.Label
+	wowPathLabel *widget.Label
 }
 
 // NewMainWindow creates a new main window
@@ -63,7 +63,7 @@ func (mw *MainWindow) showWowPathDialog() {
 			"and applies them by updating WoW's AddOns.txt file.\n\n"+
 			"Click OK to select your World of Warcraft installation directory.",
 		mw.window)
-	
+
 	// Open folder picker immediately after user closes the info dialog
 	mw.selectWowPath()
 }

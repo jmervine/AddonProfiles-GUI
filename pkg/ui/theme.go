@@ -15,15 +15,17 @@ func (st *SimpleTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant
 	case theme.ColorNameBackground:
 		return color.RGBA{R: 25, G: 25, B: 25, A: 255} // Dark background
 	case theme.ColorNameButton:
-		return color.RGBA{R: 45, G: 45, B: 45, A: 255} // Dark gray button
+		return color.RGBA{R: 60, G: 60, B: 60, A: 255} // Medium gray button (better contrast)
 	case theme.ColorNameDisabledButton:
-		return color.RGBA{R: 35, G: 35, B: 35, A: 255} // Darker gray
+		return color.RGBA{R: 40, G: 40, B: 40, A: 255} // Darker gray
 	case theme.ColorNameDisabled:
 		return color.RGBA{R: 100, G: 100, B: 100, A: 255} // Dim gray for disabled text
 	case theme.ColorNameForeground:
 		return color.RGBA{R: 240, G: 240, B: 240, A: 255} // Light gray/white text
 	case theme.ColorNameHover:
-		return color.RGBA{R: 60, G: 60, B: 60, A: 255} // Lighter gray for hover
+		return color.RGBA{R: 80, G: 80, B: 80, A: 255} // Even lighter gray for hover
+	case theme.ColorNamePressed:
+		return color.RGBA{R: 100, G: 100, B: 100, A: 255} // Light gray when pressed
 	case theme.ColorNameInputBackground:
 		return color.RGBA{R: 35, G: 35, B: 35, A: 255} // Dark input background
 	case theme.ColorNamePlaceHolder:
