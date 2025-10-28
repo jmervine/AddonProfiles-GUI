@@ -6,8 +6,8 @@ on:
       - 'v*'  # Triggers on version tags like v1.0.0
 
 jobs:
-  build:
-    name: Build Binaries
+  build-windows-linux:
+    name: Build Windows and Linux
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,40 +18,92 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Set up Docker for fyne-cross
-        run: docker version
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
 
       - name: Install fyne-cross
         run: go install github.com/fyne-io/fyne-cross@latest
 
-      - name: Build for all platforms
+      - name: Build for Windows and Linux
         run: |
-          fyne-cross windows -arch=amd64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager.exe ./cmd/gui
-          fyne-cross darwin -arch=amd64,arm64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager ./cmd/gui
-          fyne-cross linux -arch=amd64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager ./cmd/gui
+          fyne-cross windows -arch=amd64 -app-id com.github.jmervine.addonprofiles ./cmd/gui
+          fyne-cross linux -arch=amd64 -app-id com.github.jmervine.addonprofiles ./cmd/gui
 
       - name: Package binaries
         run: |
           mkdir -p release
           # Windows
           cd fyne-cross/dist/windows-amd64
-          zip ../../../release/addonprofiles-manager-windows-amd64.zip addonprofiles-manager.exe
-          cd ../../..
-          
-          # macOS Intel
-          cd fyne-cross/dist/darwin-amd64
-          tar czf ../../../release/addonprofiles-manager-macos-amd64.tar.gz addonprofiles-manager.app
-          cd ../../..
-          
-          # macOS ARM (Apple Silicon)
-          cd fyne-cross/dist/darwin-arm64
-          tar czf ../../../release/addonprofiles-manager-macos-arm64.tar.gz addonprofiles-manager.app
+          zip ../../../release/addonprofiles-manager-windows-amd64.zip gui.exe
           cd ../../..
           
           # Linux
           cd fyne-cross/dist/linux-amd64
-          tar czf ../../../release/addonprofiles-manager-linux-amd64.tar.gz addonprofiles-manager
+          tar czf ../../../release/addonprofiles-manager-linux-amd64.tar.gz gui
           cd ../../..
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-linux-binaries
+          path: release/*
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install Fyne CLI
+        run: go install fyne.io/fyne/v2/cmd/fyne@latest
+
+      - name: Build for macOS (Universal Binary)
+        run: |
+          # Build for both architectures
+          GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -o build/gui-amd64 ./cmd/gui
+          GOOS=darwin GOARCH=arm64 CGO_ENABLED=1 go build -o build/gui-arm64 ./cmd/gui
+          
+          # Create universal binary
+          lipo -create -output build/gui build/gui-amd64 build/gui-arm64
+          
+          # Package as .app
+          fyne package -os darwin -name "Addon Profile Manager" -appID com.github.jmervine.addonprofiles -exe build/gui
+
+      - name: Package binaries
+        run: |
+          mkdir -p release
+          tar czf release/addonprofiles-manager-macos-universal.tar.gz "Addon Profile Manager.app"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binaries
+          path: release/*
+
+  release:
+    name: Create Release
+    needs: [build-windows-linux, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          cp artifacts/windows-linux-binaries/* release/ || true
+          cp artifacts/macos-binaries/* release/ || true
+          ls -lah release/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
