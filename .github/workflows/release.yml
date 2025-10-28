@@ -26,9 +26,9 @@ jobs:
 
       - name: Build for all platforms
         run: |
-          fyne-cross windows -arch=amd64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager.exe
-          fyne-cross darwin -arch=amd64,arm64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager
-          fyne-cross linux -arch=amd64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager
+          fyne-cross windows -arch=amd64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager.exe ./cmd/gui
+          fyne-cross darwin -arch=amd64,arm64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager ./cmd/gui
+          fyne-cross linux -arch=amd64 -app-id com.github.jmervine.addonprofiles -output addonprofiles-manager ./cmd/gui
 
       - name: Package binaries
         run: |
