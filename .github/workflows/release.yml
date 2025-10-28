@@ -22,7 +22,9 @@ jobs:
           go-version: '1.21'
 
       - name: Build for Windows
-        run: go build -o addonprofiles-manager.exe ./cmd/gui
+        run: |
+          go build -ldflags="-s -w" -trimpath -o addonprofiles-manager.exe ./cmd/gui
+        shell: bash
 
       - name: Package binary
         run: |

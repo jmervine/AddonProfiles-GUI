@@ -22,6 +22,10 @@ Download the latest release for your platform:
 2. Extract the ZIP file
 3. Run `addonprofiles-manager.exe`
 
+**Note for Windows users:** Windows Defender may flag the executable as a potential threat (false positive). This is common with unsigned Go applications. To run the application:
+- Click "More info" → "Run anyway" when Windows SmartScreen appears
+- Or add an exception in Windows Defender: Settings → Virus & threat protection → Manage settings → Add or remove exclusions
+
 #### macOS
 1. Download: `addonprofiles-manager-macos-universal.tar.gz` (works on both Intel and Apple Silicon)
 2. Extract the archive: `tar xzf addonprofiles-manager-macos-universal.tar.gz`
