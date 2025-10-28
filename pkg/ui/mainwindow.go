@@ -26,7 +26,8 @@ type MainWindow struct {
 	addonPanel   *AddonPanel
 	actionPanel  *ActionPanel
 
-	statusLabel *widget.Label
+	statusLabel   *widget.Label
+	wowPathLabel  *widget.Label
 }
 
 // NewMainWindow creates a new main window
@@ -56,18 +57,15 @@ func NewMainWindow(app fyne.App, cfg *config.Config) *MainWindow {
 
 // showWowPathDialog shows the WoW installation path selection dialog
 func (mw *MainWindow) showWowPathDialog() {
-	dialog.ShowConfirm("Welcome to Addon Profile Manager",
-		"Please select your World of Warcraft installation directory.\n\n"+
-			"This tool reads profiles from the addon's SavedVariables\n"+
-			"and applies them by updating WoW's AddOns.txt file.",
-		func(confirmed bool) {
-			if confirmed {
-				mw.selectWowPath()
-			} else {
-				mw.app.Quit()
-			}
-		},
+	// Show info first, then immediately open folder picker
+	dialog.ShowInformation("Welcome to Addon Profile Manager",
+		"This tool reads profiles from the addon's SavedVariables\n"+
+			"and applies them by updating WoW's AddOns.txt file.\n\n"+
+			"Click OK to select your World of Warcraft installation directory.",
 		mw.window)
+	
+	// Open folder picker immediately after user closes the info dialog
+	mw.selectWowPath()
 }
 
 // selectWowPath shows a directory picker for WoW installation
@@ -98,9 +96,14 @@ func (mw *MainWindow) selectWowPath() {
 			return
 		}
 
+		// Update UI
+		if mw.wowPathLabel != nil {
+			mw.wowPathLabel.SetText("WoW Installation: " + path)
+		}
+
 		mw.initializeManager()
 		mw.refresh()
-		mw.setStatus("WoW directory configured")
+		mw.setStatus("WoW directory configured successfully")
 	}, mw.window)
 }
 
@@ -158,16 +161,20 @@ func (mw *MainWindow) setupUI() {
 	mw.actionPanel = NewActionPanel(mw)
 
 	// Create header with WoW path info
-	wowPathLabel := widget.NewLabel("WoW Installation: " + mw.config.WowInstallPath)
-	wowPathLabel.TextStyle = fyne.TextStyle{Bold: true}
+	pathText := "WoW Installation: Not configured"
+	if mw.config.WowInstallPath != "" {
+		pathText = "WoW Installation: " + mw.config.WowInstallPath
+	}
+	mw.wowPathLabel = widget.NewLabel(pathText)
+	mw.wowPathLabel.TextStyle = fyne.TextStyle{Bold: true}
 	changePathBtn := widget.NewButton("Change WoW Path", func() {
 		mw.selectWowPath()
 	})
-	
+
 	header := container.NewBorder(
 		nil,
 		nil,
-		wowPathLabel,
+		mw.wowPathLabel,
 		changePathBtn,
 		nil,
 	)
@@ -176,7 +183,7 @@ func (mw *MainWindow) setupUI() {
 	curseforgeURL, _ := url.Parse("https://www.curseforge.com/wow/addons/addon-profiles")
 	curseforgeLink := widget.NewHyperlink("▶ Get the in-game addon on CurseForge", curseforgeURL)
 	curseforgeLink.TextStyle = fyne.TextStyle{Bold: true}
-	
+
 	footer := container.NewBorder(
 		nil,
 		nil,
@@ -184,13 +191,13 @@ func (mw *MainWindow) setupUI() {
 		curseforgeLink,
 		nil,
 	)
-	
+
 	// Create main layout
 	content := container.NewBorder(
-		header,  // top
-		footer,  // bottom
-		nil,     // left
-		nil,     // right
+		header, // top
+		footer, // bottom
+		nil,    // left
+		nil,    // right
 		container.NewHSplit(
 			container.NewHSplit(
 				mw.profilePanel.Container(),

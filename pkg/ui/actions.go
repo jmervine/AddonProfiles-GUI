@@ -36,13 +36,13 @@ func NewActionPanel(mw *MainWindow) *ActionPanel {
 	// Info text explaining workflow
 	infoLabel := widget.NewLabel("Create and manage profiles\nin-game using the addon.\n\nThis tool lets you apply\nprofiles outside of WoW.")
 	infoLabel.Wrapping = fyne.TextWrapWord
-	
+
 	profileNameLabel := widget.NewLabel("Profile Name:")
 	profileNameLabel.TextStyle = fyne.TextStyle{Bold: true}
-	
+
 	scopeNameLabel := widget.NewLabel("Scope:")
 	scopeNameLabel.TextStyle = fyne.TextStyle{Bold: true}
-	
+
 	countNameLabel := widget.NewLabel("AddOn Count:")
 	countNameLabel.TextStyle = fyne.TextStyle{Bold: true}
 
