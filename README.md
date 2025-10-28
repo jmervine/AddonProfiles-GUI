@@ -23,12 +23,11 @@ Download the latest release for your platform:
 3. Run `addonprofiles-manager.exe`
 
 #### macOS
-1. Download:
-   - **Apple Silicon (M1/M2/M3)**: `addonprofiles-manager-macos-arm64.tar.gz`
-   - **Intel**: `addonprofiles-manager-macos-amd64.tar.gz`
-2. Extract the archive: `tar xzf addonprofiles-manager-macos-*.tar.gz`
-3. Move `addonprofiles-manager.app` to your Applications folder
-4. On first launch, you may need to right-click → Open to bypass Gatekeeper
+1. Download: `addonprofiles-manager-macos-universal.tar.gz` (works on both Intel and Apple Silicon)
+2. Extract the archive: `tar xzf addonprofiles-manager-macos-universal.tar.gz`
+3. Make executable (if needed): `chmod +x addonprofiles-manager`
+4. Run: `./addonprofiles-manager`
+5. On first launch, you may need to right-click → Open to bypass Gatekeeper
 
 #### Linux
 1. Download `addonprofiles-manager-linux-amd64.tar.gz`

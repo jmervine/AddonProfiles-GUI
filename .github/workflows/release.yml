@@ -62,25 +62,23 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Install Fyne CLI
-        run: go install fyne.io/fyne/v2/cmd/fyne@latest
-
       - name: Build for macOS (Universal Binary)
         run: |
           # Build for both architectures
-          GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -o build/gui-amd64 ./cmd/gui
-          GOOS=darwin GOARCH=arm64 CGO_ENABLED=1 go build -o build/gui-arm64 ./cmd/gui
+          GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -o addonprofiles-manager-amd64 ./cmd/gui
+          GOOS=darwin GOARCH=arm64 CGO_ENABLED=1 go build -o addonprofiles-manager-arm64 ./cmd/gui
           
           # Create universal binary
-          lipo -create -output build/gui build/gui-amd64 build/gui-arm64
-          
-          # Package as .app
-          fyne package -os darwin -name "Addon Profile Manager" -appID com.github.jmervine.addonprofiles -exe build/gui
+          mkdir -p build
+          lipo -create -output build/addonprofiles-manager addonprofiles-manager-amd64 addonprofiles-manager-arm64
+          chmod +x build/addonprofiles-manager
 
       - name: Package binaries
         run: |
           mkdir -p release
-          tar czf release/addonprofiles-manager-macos-universal.tar.gz "Addon Profile Manager.app"
+          cd build
+          tar czf ../release/addonprofiles-manager-macos-universal.tar.gz addonprofiles-manager
+          cd ..
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
